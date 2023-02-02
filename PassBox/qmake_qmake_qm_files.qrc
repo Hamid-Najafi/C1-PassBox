@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="i18n">
+<file alias="passBox_en_US.qm">/home/c1tech/C1-PassBox/PassBox/.qm/passBox_en_US.qm</file>
+</qresource>
+</RCC>

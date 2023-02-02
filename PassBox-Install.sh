@@ -30,10 +30,19 @@ echo "-------------------------------------"
 echo "Set New Hostname: (PassBox-Floor-Room)"
 read hostname
 hostnamectl set-hostname $hostname
+string="$hostname"
+file="/etc/hosts"
+if ! grep -q "$string" "$file"; then
+  printf "\n%s" "127.0.0.1 $hostname" >> "$file"
+fi
 echo "-------------------------------------"
 echo "Setting TimeZone"
 echo "-------------------------------------"
 timedatectl set-timezone Asia/Tehran 
+echo "-------------------------------------"
+echo "Configuring APT"
+echo "-------------------------------------"
+# http://repo.iut.ac.ir/repo/raspbian/raspbian/
 echo "-------------------------------------"
 echo "Installing Pre-Requirements"
 echo "-------------------------------------"
@@ -46,11 +55,14 @@ echo "Installing Qt & Tools"
 echo "-------------------------------------"
 apt install -y mesa-common-dev libfontconfig1 libxcb-xinerama0 libglu1-mesa-dev
 apt install -q -y qt5* qttools5* qtmultimedia5* qtwebengine5* qtvirtualkeyboard* qtdeclarative5* qt3d5*
-apt install -q -y qtbase5* 
+# DONT INSTALL THESE
+# apt install -q -y qtbase5* 
+# apt install -q -y qtbase5-dev qtbase5-dev-tools 
+# apt install -q -y qtbase5-gles-dev qtbase5-private-gles-dev qtbase5-private-dev
 apt install -q -y libqt5*
 apt install -q -y qml-module*
 echo "-------------------------------------"
-echo "Installing Contold Panel Application"
+echo "Installing PassBox Application"
 echo "-------------------------------------"
 url="https://github.com/Hamid-Najafi/C1-PassBox.git"
 
@@ -69,7 +81,7 @@ make -j2
 
 chown -R c1tech:c1tech /home/c1tech/C1-PassBox
 echo "-------------------------------------"
-echo "Creating Service for Contold Panel Application"
+echo "Creating Service for PassBox Application"
 echo "-------------------------------------"
 journalctl --vacuum-time=60d
 loginctl enable-linger c1tech
@@ -80,12 +92,12 @@ Description=C1 Tech PassBox v1.0
 
 [Service]
 Type=idle
-Environment="XDG_RUNTIME_DIR=/run/user/$UID"
+Environment="XDG_RUNTIME_DIR=/run/user/1000"
 Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus"
 Environment="QT_QPA_PLATFORM=eglfs"
 Environment="QT_QPA_EGLFS_ALWAYS_SET_MODE=1"
 # Environment="QT_QPA_EGLFS_HIDECURSOR=1"
-ExecStart=/home/c1tech/C1-PassBox/PassBox/PassBox -platform eglfs
+ExecStart=/home/c1tech/C1-PassBox/PassBox/passBox -platform eglfs
 Restart=always
 # User=root
 
@@ -97,6 +109,12 @@ systemctl daemon-reload
 systemctl enable PassBox
 systemctl restart PassBox
 echo "-------------------------------------"
+echo "Installing Fonts"
+echo "-------------------------------------"
+sudo cp -r /home/c1tech/C1-PassBox/PassBox/fonts/* /usr/local/share/fonts/
+echo "build font information cache files"
+fc-cache -fv
+echo "-------------------------------------"
 echo "Configuring PI Power Button"
 echo "-------------------------------------"
 # Connect the power button to Pin 5 (GPIO 3/SCL) and Pin 6 (GND)
@@ -107,6 +125,8 @@ git clone https://github.com/Howchoo/pi-power-button.git
 echo "-------------------------------------"
 echo "Configuring Splash Screen"
 echo "-------------------------------------"
+echo "ONLY FOR RaspbiOS 11 (bullseye)"
+echo "-------------------------------------"
 File=/boot/cmdline.txt
 String=\ quiet\ splash\ plymouth.ignore-serial-consoles
 if grep -q "$String" "$File"; then
@@ -115,9 +135,12 @@ else
 truncate -s-1 "$File"
 echo -n "$String" >> /boot/cmdline.txt
 fi
-
 # sudo nano /boot/config.txt
 # disable_splash=1
+echo "-------------------------------------"
+echo "ONLY FOR RaspbiOS 11 (bullseye)"
+echo "-------------------------------------"
+
 
 apt -y autoremove --purge plymouth
 apt -y install plymouth plymouth-themes
