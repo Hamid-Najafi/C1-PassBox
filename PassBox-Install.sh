@@ -13,8 +13,8 @@
 echo "-------------------------------------"
 echo "Configuring User & Groups"
 echo "-------------------------------------"
-adduser c1tech --gecos "FUMP ICT,RoomNumber,WorkPhone,HomePhone" --disabled-password
-echo "c1tech:1478963" | chpasswd
+# adduser c1tech --gecos "FUMP ICT,RoomNumber,WorkPhone,HomePhone" --disabled-password
+# echo "c1tech:1478963" | chpasswd
 usermod -a -G sudo c1tech
 usermod -a -G dialout c1tech
 usermod -a -G audio c1tech
