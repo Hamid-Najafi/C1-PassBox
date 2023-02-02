@@ -1,0 +1,40 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>images/setting.svg</file>
+        <file>Colors.qml</file>
+        <file>images/door_closed.svg</file>
+        <file>images/door_open.svg</file>
+        <file>Door.qml</file>
+        <file>fonts/CooperHewitt-Bold.ttf</file>
+        <file>fonts/CooperHewitt-BoldItalic.ttf</file>
+        <file>fonts/CooperHewitt-Book.ttf</file>
+        <file>fonts/CooperHewitt-BookItalic.ttf</file>
+        <file>fonts/CooperHewitt-Heavy.ttf</file>
+        <file>fonts/CooperHewitt-HeavyItalic.ttf</file>
+        <file>fonts/CooperHewitt-Light.ttf</file>
+        <file>fonts/CooperHewitt-LightItalic.ttf</file>
+        <file>fonts/CooperHewitt-Medium.ttf</file>
+        <file>fonts/CooperHewitt-MediumItalic.ttf</file>
+        <file>fonts/CooperHewitt-Semibold.ttf</file>
+        <file>fonts/CooperHewitt-SemiboldItalic.ttf</file>
+        <file>fonts/CooperHewitt-Thin.ttf</file>
+        <file>fonts/CooperHewitt-ThinItalic.ttf</file>
+        <file>images/background.png</file>
+        <file>images/power.svg</file>
+        <file>StateDiv.qml</file>
+        <file>Door2.qml</file>
+        <file>images/magnet.svg</file>
+        <file>images/lock.svg</file>
+        <file>images/unlock.svg</file>
+        <file>images/time.svg</file>
+        <file>CircleSlider.qml</file>
+        <file>SettingPage.qml</file>
+        <file>images/home.svg</file>
+        <file>images/pressure.svg</file>
+        <file>images/humidity.svg</file>
+        <file>images/temprature.svg</file>
+        <file>images/alarm.svg</file>
+        <file>images/lamp.svg</file>
+    </qresource>
+</RCC>
