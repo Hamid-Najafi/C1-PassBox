@@ -36,9 +36,15 @@ if ! grep -q "$string" "$file"; then
   printf "\n%s" "127.0.0.1 $hostname" >> "$file"
 fi
 echo "-------------------------------------"
-echo "Setting TimeZone"
+echo "Setting TimeZone & Locale"
 echo "-------------------------------------"
 timedatectl set-timezone Asia/Tehran 
+# Via TTY Console
+# dpkg-reconfigure locales
+# dpkg-reconfigure keyboard-configuration
+locale-gen en_US
+locale-gen fa_IR
+locale-gen
 echo "-------------------------------------"
 echo "Configuring APT"
 echo "-------------------------------------"
@@ -49,7 +55,20 @@ echo "-------------------------------------"
 export DEBIAN_FRONTEND=noninteractive
 apt update && apt upgrade -y
 apt install -y software-properties-common git avahi-daemon python3-pip 
-apt install -y debhelper build-essential gcc g++ gdb cmake 
+apt install -y debhelper build-essential gcc g++ gdb cmake
+echo "-------------------------------------"
+echo "Installing GPIO Libraries"
+echo "-------------------------------------"
+echo "Wiring RaspberryPI"
+git clone https://github.com/WiringPi/WiringPi.git
+cd /home/c1tech/WiringPi
+./build clean
+./build  
+# echo "Wiring OrangePI"
+# git clone https://github.com/orangepi-xunlong/wiringOP   
+# cd /home/fumpict/wiringOP
+# ./build clean
+# ./build 
 echo "-------------------------------------"
 echo "Installing Qt & Tools"
 echo "-------------------------------------"
@@ -92,14 +111,16 @@ Description=C1 Tech PassBox v1.0
 
 [Service]
 Type=idle
-Environment="XDG_RUNTIME_DIR=/run/user/1000"
-Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus"
+# Environment="XDG_RUNTIME_DIR=/run/user/1000"
+# Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus"
 Environment="QT_QPA_PLATFORM=eglfs"
 Environment="QT_QPA_EGLFS_ALWAYS_SET_MODE=1"
-# Environment="QT_QPA_EGLFS_HIDECURSOR=1"
-ExecStart=/home/c1tech/C1-PassBox/PassBox/passBox -platform eglfs
+Environment="QT_QPA_EGLFS_HIDECURSOR=1"
+Environment="QT_QPA_EGLFS_PHYSICAL_WIDTH=500"
+Environment="QT_QPA_EGLFS_PHYSICAL_HEIGHT=250"
+ExecStart=
 Restart=always
-# User=root
+User=root
 
 [Install]
 WantedBy=default.target
@@ -140,8 +161,6 @@ fi
 echo "-------------------------------------"
 echo "ONLY FOR RaspbiOS 11 (bullseye)"
 echo "-------------------------------------"
-
-
 apt -y autoremove --purge plymouth
 apt -y install plymouth plymouth-themes
 # plymouth-set-default-theme --list
@@ -153,8 +172,12 @@ sudo plymouth-set-default-theme spinner
 cp /usr/share/plymouth/themes/spinner/bgrt-fallback.png{,.bak}
 cp /usr/share/plymouth/themes/spinner/watermark.png{,.bak}
 cp /usr/share/plymouth/ubuntu-logo.png{,.bak}
-cp /home/c1tech/C1-PassBox/bgrt-c1.png /usr/share/plymouth/themes/spinner/bgrt-fallback.png
+
+# This Comes abow Spinner
+cp /home/c1tech/C1-PassBox/bgrt-c1.png /usr/share/plymouth/ubuntu-logo.png
+# This Comes bellow Spinner
 cp /home/c1tech/C1-PassBox/bgrt-c1.png /usr/share/plymouth/themes/spinner/watermark.png
+
 update-initramfs -u
 # update-alternatives --list default.plymouth
 # update-alternatives --display default.plymouth
