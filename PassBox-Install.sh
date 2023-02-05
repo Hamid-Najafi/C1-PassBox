@@ -60,13 +60,20 @@ echo "-------------------------------------"
 echo "Installing GPIO Libraries"
 echo "-------------------------------------"
 echo "Wiring RaspberryPI"
-git clone https://github.com/WiringPi/WiringPi.git
-cd /home/c1tech/WiringPi
+url="https://github.com/WiringPi/WiringPi.git"
+folder="/home/c1tech/wiringPi"
+[ -d "${folder}" ] && rm -rf "${folder}"
+git clone "${url}" "${folder}"
+cd "${folder}"
 ./build clean
 ./build  
+
 # echo "Wiring OrangePI"
-# git clone https://github.com/orangepi-xunlong/wiringOP   
-# cd /home/fumpict/wiringOP
+# url="https://github.com/orangepi-xunlong/wiringOP"
+# folder="/home/c1tech/wiringOP"
+# [ -d "${folder}" ] && rm -rf "${folder}"
+# git clone "${url}" "${folder}"
+# cd "${folder}"
 # ./build clean
 # ./build 
 echo "-------------------------------------"
@@ -99,26 +106,28 @@ qmake
 make -j2
 
 chown -R c1tech:c1tech /home/c1tech/C1-PassBox
+chmod +x /home/c1tech/C1-PassBox/ExecStart.sh
+chmod +x /home/c1tech/C1-PassBox/PassBox/passBox
 echo "-------------------------------------"
 echo "Creating Service for PassBox Application"
 echo "-------------------------------------"
 journalctl --vacuum-time=60d
 loginctl enable-linger c1tech
 
-cat > /etc/systemd/system/PassBox.service << "EOF"
+cat > /etc/systemd/system/passbox.service << "EOF"
 [Unit]
 Description=C1 Tech PassBox v1.0
 
 [Service]
 Type=idle
-# Environment="XDG_RUNTIME_DIR=/run/user/1000"
-# Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus"
+Environment="XDG_RUNTIME_DIR=/run/user/0"
+Environment="DBUS_SESSION_BUS_ADDRESS=unix:path=$XDG_RUNTIME_DIR/bus"
 Environment="QT_QPA_PLATFORM=eglfs"
 Environment="QT_QPA_EGLFS_ALWAYS_SET_MODE=1"
 Environment="QT_QPA_EGLFS_HIDECURSOR=1"
 Environment="QT_QPA_EGLFS_PHYSICAL_WIDTH=500"
 Environment="QT_QPA_EGLFS_PHYSICAL_HEIGHT=250"
-ExecStart=
+ExecStart=/bin/sh -c '/home/c1tech/C1-PassBox/ExecStart.sh'
 Restart=always
 User=root
 
@@ -127,8 +136,8 @@ WantedBy=default.target
 EOF
 
 systemctl daemon-reload
-systemctl enable PassBox
-systemctl restart PassBox
+systemctl enable passbox
+systemctl restart passbox
 echo "-------------------------------------"
 echo "Installing Fonts"
 echo "-------------------------------------"
